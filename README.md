@@ -1,2 +1,2 @@
-# haskell-avatar-maker
-an avatar maker that creates headshots of humans done in a stylized format. written in haskell.
+# a simple avatar maker
+a command line app that, when given various inputs, creates a human avatar done in a stylized format. written in haskell.
