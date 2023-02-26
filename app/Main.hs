@@ -1,17 +1,9 @@
 module Main (main, getAnswer) where
     
-import IOUtil (loadAssets, formAssetPaths, outputPath)
+import IOUtil (loadAssets, outputPath)
+import AvatarMaker (hairColours, hairLengths, hairTextures, skinColours, eyeColours, shirtColours, yesNo, createAvatar)
 import AvatarDisplay (displayAvatar)
 import Codec.Picture
--- import Control.Monad
-import AvatarMaker (hairColours, hairLengths, hairTextures, skinColours, eyeColours, shirtColours, yesNo, createAvatar, mergeImages, dyeImage, colourToRGBA8)
-
--- constants
-imagesPath :: String
-imagesPath = "./images2/"
-
-outputPath :: String
-outputPath = "./output/"
 
 main :: IO ()
 main = do
@@ -42,97 +34,20 @@ main = do
 
     putStrLn "now generating avatar..."
 
-    images <- formAssets currHairColour currHairLength currHairTexture currSkinColour currEyeColour currShirtColour hasBangs
-    let avatar = createAvatar images
+    avatarPartsImages <- loadAssets currHairLength currHairTexture hasBangs
+    let coloursSoFar = [currShirtColour, currSkinColour, currEyeColour, currHairColour]
+    let avatarPartsColours = if hasBangs == "yes" then coloursSoFar ++ [currHairColour] else coloursSoFar
+        
+    let avatar = createAvatar avatarPartsImages avatarPartsColours
     writePng (outputPath ++ currName ++ ".png") avatar
-    displayAvatar(avatar)
+    displayAvatar avatar
     putStrLn "Success!"
-    
-    putStrLn "now generating avatar..."
-
-
-formAssets :: String -> String -> String -> String -> String -> String -> String -> IO [Image PixelRGBA8]
-formAssets hairColour hairLength hairTexture skinColour eyeColour shirtColour hasBangs = do
-    eyeImage <- mergeEye eyeColour
-    hairImage <- mergeHair hairColour hairLength hairTexture
-    baseImage <- mergeBase skinColour shirtColour
-    bangsImage <- if hasBangs == "yes" then mergeBangs hairColour else loadImage(formPath "blank")
-    return [baseImage, hairImage, bangsImage, eyeImage]
-
-
-mergeBangs :: String -> IO(Image PixelRGBA8)
-mergeBangs hairColour = do
-    lineImage <- loadImage (formPath "bangs lines")
-    colourImage <-  loadImage (formPath "bangs colour")
-    
-    let colourImageNew = dyeImage colourImage (colourToRGBA8 hairColour)
-    return (mergeImages lineImage colourImageNew)
-
-
-mergeEye :: String -> IO(Image PixelRGBA8)
-mergeEye eyeColour = do
-    lineImage <- loadImage (formPath "eyes lines")
-    colourImage <-  loadImage (formPath "eyes colour")
-    
-    let colourImageNew = dyeImage colourImage (colourToRGBA8 eyeColour)
-    return (mergeImages lineImage colourImageNew)
-
-
-mergeBase :: String -> String -> IO(Image PixelRGBA8)
-mergeBase skinColour shirtColour = do
-    baseLineImage <- loadImage (formPath "base lines")
-    baseColourImage <- loadImage (formPath "base colour")
-    shirtColourImage <- loadImage (formPath "shirt colour")
-
-    let 
-        baseColourImageNew = dyeImage baseColourImage (colourToRGBA8 skinColour)
-        shirtColourImageNew = dyeImage shirtColourImage (colourToRGBA8 shirtColour)
-    return (mergeImages baseLineImage (mergeImages baseColourImageNew shirtColourImageNew))
-
-
-
-mergeHair :: String -> String -> String -> IO(Image PixelRGBA8)
-mergeHair hairColour hairLength hairTexture = do
-    colourImage <- loadImage (formPath ("hair " ++ hairTexture ++ " " ++ hairLength ++ " colour"))
-    lineImage <- loadImage (formPath ("hair " ++ hairTexture ++ " " ++ hairLength ++ " lines"))
-
-    let colourImageNew = dyeImage colourImage (colourToRGBA8 hairColour)
-    return (mergeImages lineImage colourImageNew)
-    
-    
-
-
-
---loadAssets :: [String] -> IO [(Image PixelRGBA8)]
---loadAssets paths = mapM loadImage paths
-
-
-loadImage :: FilePath -> IO (Image PixelRGBA8)
-loadImage path = do
-    result <- readImage path
-    case result of
-        Left errorMsg -> error $ "Error loading PNG image: " ++ errorMsg
-        Right dynamicImage -> do
-            let image :: Image PixelRGBA8
-                image = convertRGBA8 dynamicImage
-            return image
-
-
---formAssetPaths :: String -> String -> String -> String -> String -> [String]
---formAssetPaths currHairColour currHairLength currHairTexture currSkinColour currEyeColour = 
---    reverse [formHairPath currHairLength currHairTexture, formPath "eyes", formPath "base"]
-
-formPath :: String -> String
-formPath part = imagesPath ++ part ++ ".png"
-
---formHairPath :: String -> String -> String
---formHairPath hairLength hairTexture = formPath ("hair " ++ hairTexture ++ " " ++ hairLength )
 
 getAnswer :: [String] -> IO String
 getAnswer elemlist = do
     line <- getLine
     if line `elem` elemlist
-       then return line
-       else do
-          putStrLn "Please choose one of the provided options!"
-          getAnswer elemlist
+        then return line
+        else do
+            putStrLn "Please choose one of the provided options!"
+            getAnswer elemlist

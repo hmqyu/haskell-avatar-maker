@@ -1,15 +1,30 @@
 module IOUtil (loadAssets, formAssetPaths, outputPath) where
 
 import Codec.Picture
+import AvatarMaker (avatarParts)
 
 imagesPath :: String
-imagesPath = "./images/"
+imagesPath = "./images2/"
 
 outputPath :: String
 outputPath = "./output/"
 
-loadAssets :: [String] -> IO [(Image PixelRGBA8)]
-loadAssets paths = mapM loadImage paths
+loadAssets :: String -> String -> String -> IO [Image PixelRGBA8]
+loadAssets currHairLength currHairTexture hasBangs = mapM loadImage (formAssetPaths currHairLength currHairTexture hasBangs)
+
+formAssetPaths :: String -> String -> String -> [String]
+formAssetPaths currHairLength currHairTexture hasBangs = 
+    foldr (\x y -> formAvatarPartPaths x ++ y) hairPaths avatarParts
+    where hairPaths = formHairPaths currHairLength currHairTexture hasBangs
+
+formAvatarPartPaths :: String -> [String]
+formAvatarPartPaths part = [imagesPath ++ part ++ " colour.png", imagesPath ++ part ++ " lines.png"]
+
+formHairPaths :: String -> String -> String -> [String]
+formHairPaths hairTexture hairLength hasBangs
+    | hasBangs == "yes" = hairPaths ++ formAvatarPartPaths "bangs"
+    | otherwise = hairPaths
+    where hairPaths = formAvatarPartPaths ("hair " ++ hairTexture ++ " " ++ hairLength)
 
 loadImage :: FilePath -> IO (Image PixelRGBA8)
 loadImage path = do
@@ -21,12 +36,51 @@ loadImage path = do
                 image = convertRGBA8 dynamicImage
             return image
 
-formAssetPaths :: String -> String -> String -> String -> String -> [String]
-formAssetPaths currHairColour currHairLength currHairTexture currSkinColour currEyeColour = 
-    reverse [formHairPath currHairLength currHairTexture currHairColour, formPath "eyes" currEyeColour, formPath "skin" currSkinColour]
+-- formAssets :: String -> String -> String -> String -> String -> String -> String -> IO [Image PixelRGBA8]
+-- formAssets hairColour hairLength hairTexture skinColour eyeColour shirtColour hasBangs = do
+--     eyeImage <- mergeEye eyeColour
+--     hairImage <- mergeHair hairColour hairLength hairTexture
+--     baseImage <- mergeBase skinColour shirtColour
+--     bangsImage <- if hasBangs == "yes" then mergeBangs hairColour else loadImage(formPath "blank")
+--     return [baseImage, hairImage, bangsImage, eyeImage]
 
-formPath :: String -> String -> String
-formPath part colour = imagesPath ++ part ++ " " ++ colour ++ ".png"
 
-formHairPath :: String -> String -> String -> String
-formHairPath hairLength hairTexture hairColour = formPath "hair" (hairLength ++ " " ++ hairTexture ++ " " ++ hairColour)
+-- mergeBangs :: String -> IO(Image PixelRGBA8)
+-- mergeBangs hairColour = do
+--     lineImage <- loadImage (formPath "bangs lines")
+--     colourImage <-  loadImage (formPath "bangs colour")
+    
+--     let colourImageNew = dyeImage colourImage (colourToRGBA8 hairColour)
+--     return (mergeImages lineImage colourImageNew)
+
+
+-- mergeEye :: String -> IO(Image PixelRGBA8)
+-- mergeEye eyeColour = do
+--     lineImage <- loadImage (formPath "eyes lines")
+--     colourImage <-  loadImage (formPath "eyes colour")
+    
+--     let colourImageNew = dyeImage colourImage (colourToRGBA8 eyeColour)
+--     return (mergeImages lineImage colourImageNew)
+
+
+-- mergeBase :: String -> String -> IO(Image PixelRGBA8)
+-- mergeBase skinColour shirtColour = do
+--     baseLineImage <- loadImage (formPath "base lines")
+--     baseColourImage <- loadImage (formPath "base colour")
+--     shirtColourImage <- loadImage (formPath "shirt colour")
+
+--     let 
+--         baseColourImageNew = dyeImage baseColourImage (colourToRGBA8 skinColour)
+--         shirtColourImageNew = dyeImage shirtColourImage (colourToRGBA8 shirtColour)
+--     return (mergeImages baseLineImage (mergeImages baseColourImageNew shirtColourImageNew))
+
+
+
+-- mergeHair :: String -> String -> String -> IO(Image PixelRGBA8)
+-- mergeHair hairColour hairLength hairTexture = do
+--     colourImage <- loadImage (formPath ("hair " ++ hairTexture ++ " " ++ hairLength ++ " colour"))
+--     lineImage <- loadImage (formPath ("hair " ++ hairTexture ++ " " ++ hairLength ++ " lines"))
+
+--     let colourImageNew = dyeImage colourImage (colourToRGBA8 hairColour)
+--     return (mergeImages lineImage colourImageNew)
+    
