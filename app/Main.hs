@@ -1,9 +1,15 @@
 module Main (main, getAnswer) where
     
 import Codec.Picture
-import AvatarMaker (hairColours, hairLengths, hairTextures, skinColours, eyeColours, copyPixels)
+-- import Control.Monad
+import AvatarMaker (hairColours, hairLengths, hairTextures, skinColours, eyeColours, createAvatar)
 
 -- constants
+imagesPath :: String
+imagesPath = "./images/"
+
+outputPath :: String
+outputPath = "./output/"
 
 main :: IO ()
 main = do
@@ -23,27 +29,38 @@ main = do
     putStrLn "And finally, please pick an eye colour from the following: blue, green, light brown, dark brown"
     currEyeColour <- getAnswer eyeColours
 
+    putStrLn "And finally, please give your character a name:"
+    currName <- getLine
+
     putStrLn "now generating avatar"
 
-    image1 <- loadImage "./images/bangs blonde.png"
-    image2 <- loadImage "./images/skin tan.png"
-    writePng "merged.png" (copyPixels image1 image2)
+    images <- loadAssets (formAssetPaths currHairColour currHairLength currHairTexture currSkinColour currEyeColour)
+
+    writePng (outputPath ++ currName ++ ".png") (createAvatar images)
     putStrLn "Success!"
+
+loadAssets :: [String] -> IO [(Image PixelRGBA8)]
+loadAssets paths = mapM loadImage paths
 
 loadImage :: FilePath -> IO (Image PixelRGBA8)
 loadImage path = do
     result <- readImage path
     case result of
-        Left errorMsg -> do
-            let image :: Image PixelRGBA8
-                image = generateImage (\x y -> PixelRGBA8 0 0 0 0) 600 600
-            putStrLn $ "An error occurred"
-            -- fix this to return an error or smth
-            return image
+        Left errorMsg -> error $ "Error loading PNG image: " ++ errorMsg
         Right dynamicImage -> do
             let image :: Image PixelRGBA8
                 image = convertRGBA8 dynamicImage
             return image
+
+formAssetPaths :: String -> String -> String -> String -> String -> [String]
+formAssetPaths currHairColour currHairLength currHairTexture currSkinColour currEyeColour = 
+    reverse [formHairPath currHairLength currHairTexture currHairColour, formPath "eyes" currEyeColour, formPath "skin" currSkinColour]
+
+formPath :: String -> String -> String
+formPath part colour = imagesPath ++ part ++ " " ++ colour ++ ".png"
+
+formHairPath :: String -> String -> String -> String
+formHairPath hairLength hairTexture hairColour = formPath "hair" (hairLength ++ " " ++ hairTexture ++ " " ++ hairColour)
 
 getAnswer :: [String] -> IO String
 getAnswer elemlist = do
