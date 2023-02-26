@@ -68,7 +68,6 @@ createAvatar (h:t) = foldl (\x y -> mergeImages y x) h t
 -- mergeImages
 -- merges two PNG images together into one PNG image
 -- the first image passed will be merged on top of the second image passed
-
 mergeImages :: Image PixelRGBA8 -> Image PixelRGBA8 -> Image PixelRGBA8
 mergeImages topImage bottomImage = generateImage replacePixel width height
   where
