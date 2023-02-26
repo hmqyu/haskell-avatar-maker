@@ -1,5 +1,5 @@
 module AvatarMaker
-    ( hairColours, hairLengths, hairTextures, skinColours, eyeColours, createAvatar ) where
+    ( hairColours, hairLengths, hairTextures, skinColours, eyeColours, shirtColours, yesNo, createAvatar, colourToRGBA8, mergeImages, dyeImage) where
 
 ---------------
 --- IMPORTS ---
@@ -13,7 +13,7 @@ avatarParts :: [String]
 avatarParts = ["hair", "eyes", "skin"]
 
 hairColours :: [String]
-hairColours = ["black", "brown", "honey", "blonde"]
+hairColours = ["black", "light brown", "dark brown", "blonde"]
 
 hairLengths :: [String]
 hairLengths = ["short","medium","long"] 
@@ -25,29 +25,30 @@ skinColours :: [String]
 skinColours = ["light","tan","medium", "dark"] 
 
 eyeColours :: [String]
-eyeColours = ["blue","green","hazel", "brown"]
+eyeColours = ["blue","green","light brown", "dark brown"]
 
+shirtColours :: [String]
+shirtColours = ["blue","green","red", "black", "white"]
+
+
+yesNo :: [String]
+yesNo = ["yes","no"]
 
 -- colour constants --
 
-colourToRGBA8 :: String -> Maybe PixelRGBA8
-colourToRGBA8 "white"       = Just $ PixelRGBA8 255 255 255 255
-colourToRGBA8 "red"         = Just $ PixelRGBA8 240 83 83 255
-colourToRGBA8 "green"       = Just $ PixelRGBA8 100 209 108 255
-colourToRGBA8 "blue"        = Just $ PixelRGBA8 100 169 209 255
-colourToRGBA8 "blonde"      = Just $ PixelRGBA8 230 214 167 255
-colourToRGBA8 "light brown" = Just $ PixelRGBA8 178 136 110 255
-colourToRGBA8 "dark brown"  = Just $ PixelRGBA8 100 81 79 255
-colourToRGBA8 "black"       = Just $ PixelRGBA8 65 60 61 255
-colourToRGBA8 _             = Nothing
-
-
-skinColourToRGBA8 :: String -> Maybe PixelRGBA8
-skinColourToRGBA8 "light"   = Just $ PixelRGBA8 181 140 104 255
-skinColourToRGBA8 "tan"     = Just $ PixelRGBA8 244 195 161 255
-skinColourToRGBA8 "medium"  = Just $ PixelRGBA8 204 154 128 255
-skinColourToRGBA8 "dark"    = Just $ PixelRGBA8 134 90 78 255
-skinColourToRGBA8 _         = Nothing
+colourToRGBA8 :: String -> PixelRGBA8
+colourToRGBA8 "white"       = PixelRGBA8 255 255 255 255
+colourToRGBA8 "red"         = PixelRGBA8 240 83 83 255
+colourToRGBA8 "green"       = PixelRGBA8 100 209 108 255
+colourToRGBA8 "blue"        = PixelRGBA8 100 169 209 255
+colourToRGBA8 "blonde"      = PixelRGBA8 230 214 167 255
+colourToRGBA8 "light brown" = PixelRGBA8 178 136 110 255
+colourToRGBA8 "dark brown"  = PixelRGBA8 100 81 79 255
+colourToRGBA8 "black"       = PixelRGBA8 65 60 61 255
+colourToRGBA8 "light"   = PixelRGBA8 181 140 104 255
+colourToRGBA8 "tan"     = PixelRGBA8 244 195 161 255
+colourToRGBA8 "medium"  = PixelRGBA8 204 154 128 255
+colourToRGBA8 "dark"    = PixelRGBA8 134 90 78 255
 
 
 ----------------
@@ -93,8 +94,8 @@ mixPixel (PixelRGBA8 r1 g1 b1 a1) (PixelRGBA8 r2 g2 b2 a2) =
 mixPixelValue :: (Integral a) => a -> a -> a -> a
 mixPixelValue c1 c2 alpha = round ((fromIntegral alpha / 255.0) * fromIntegral c1 + (fromIntegral (255 - alpha) / 255.0) * fromIntegral c2)
 
--- TODO:
+
+-- dyes an image either using a defined colour constant
 dyeImage :: Image PixelRGBA8 -> PixelRGBA8 -> Image PixelRGBA8
 dyeImage img (PixelRGBA8 r1 g1 b1 a1) =
   pixelMap (\(PixelRGBA8 r2 g2 b2 a2) -> if a2 == 0 then PixelRGBA8 r2 g2 b2 a2 else PixelRGBA8 r1 g1 b1 a2) img
--- dyes an image either using a defined colour constant or a given RGB/hexcode value
