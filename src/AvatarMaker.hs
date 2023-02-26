@@ -1,10 +1,15 @@
 module AvatarMaker
-    ( hairColours, hairLengths, hairTextures, skinColours, eyeColours ) where
+    ( hairColours, hairLengths, hairTextures, skinColours, eyeColours, copyPixels ) where
+
+---------------
+--- IMPORTS ---
+---------------
+import Codec.Picture
+
 
 ---------------
 -- CONSTANTS --
 ---------------
-
 hairColours :: [String]
 hairColours = ["black", "brown", "honey", "blonde"]
 
@@ -20,23 +25,47 @@ skinColours = ["light","tan","medium", "dark"]
 eyeColours :: [String]
 eyeColours = ["blue","green","hazel", "brown"]
 
+
 ----------------
 ---- FIELDS ----
 ----------------
 
 
+
 ---------------
 --- METHODS ---
 ---------------
-
 -- TODO:
 -- createAvatar 
 -- creates the avatar using the given components
 
--- TODO:
+-- TODO: done???
 -- mergeImages
 -- merges two PNG images together into one PNG image
 -- the first image passed will be merged on top of the second image passed
+
+copyPixels :: Image PixelRGBA8 -> Image PixelRGBA8 -> Image PixelRGBA8
+copyPixels fromImage toImage = generateImage genFunc newWidth newHeight
+  where
+    genFunc x y = if pixelOpacity (pixelAt fromImage x y) < 255
+        then pixelAt toImage x y
+        -- then mixPixel (pixelAt fromImage x y) (pixelAt toImage x y)
+        else pixelAt fromImage x y
+    newWidth = imageWidth toImage
+    newHeight = imageHeight toImage
+
+-- for smoothening the sharp edges
+-- mixPixel :: PixelRGBA8 -> PixelRGBA8 -> PixelRGBA8
+-- mixPixel (PixelRGBA8 r1 g1 b1 a1) (PixelRGBA8 r2 g2 b2 a2) =
+--     PixelRGBA8
+--         (mixPixelValue r1 r2 a1)
+--         (mixPixelValue g1 g2 a1)
+--         (mixPixelValue b1 b2 a1)
+--         (mixPixelValue a1 a2 a1)
+
+-- mixPixelValue :: (Integral a) => a -> a -> a -> a
+-- -- mixPixelValue c1 c2 alpha = div ((255 - alpha) 255) * c1 + (alpha / 255) * c2
+-- mixPixelValue c1 c2 alpha = round ((fromIntegral (255 - alpha) / 255.0) * fromIntegral c1 + (fromIntegral alpha / 255.0) * fromIntegral c2)
 
 -- TODO:
 -- dyeImage
