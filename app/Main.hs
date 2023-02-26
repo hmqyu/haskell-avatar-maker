@@ -14,7 +14,7 @@ outputPath = "./output/"
 main :: IO ()
 main = do
     putStrLn "a simple avatar maker -- work in progress!"
-    putStrLn "Please pick a hair colour from the following: black, brown, honey, blonde"
+    putStrLn "Please pick a hair colour from the following: black, light brown, dark brown, blonde"
     currHairColour <- getAnswer hairColours
 
     putStrLn "Please pick a hair length from the following: short, medium, long"
@@ -26,7 +26,7 @@ main = do
     putStrLn "Please pick a skin colour from the following: light, tan, medium, dark"
     currSkinColour <- getAnswer skinColours
 
-    putStrLn "And finally, please pick an eye colour from the following: blue, green, hazel, brown"
+    putStrLn "And finally, please pick an eye colour from the following: blue, green, light brown, dark brown"
     currEyeColour <- getAnswer eyeColours
 
     putStrLn "And finally, please give your character a name:"
