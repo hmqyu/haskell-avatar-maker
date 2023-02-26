@@ -1,6 +1,7 @@
 module Main (main, getAnswer) where
     
-import AvatarMaker (hairColours, hairLengths, hairTextures, skinColours, eyeColours)
+import Codec.Picture
+import AvatarMaker (hairColours, hairLengths, hairTextures, skinColours, eyeColours, copyPixels)
 
 -- constants
 
@@ -23,6 +24,26 @@ main = do
     currEyeColour <- getAnswer eyeColours
 
     putStrLn "now generating avatar"
+
+    image1 <- loadImage "./images/bangs blonde.png"
+    image2 <- loadImage "./images/skin tan.png"
+    writePng "merged.png" (copyPixels image1 image2)
+    putStrLn "Success!"
+
+loadImage :: FilePath -> IO (Image PixelRGBA8)
+loadImage path = do
+    result <- readImage path
+    case result of
+        Left errorMsg -> do
+            let image :: Image PixelRGBA8
+                image = generateImage (\x y -> PixelRGBA8 0 0 0 0) 600 600
+            putStrLn $ "An error occurred"
+            -- fix this to return an error or smth
+            return image
+        Right dynamicImage -> do
+            let image :: Image PixelRGBA8
+                image = convertRGBA8 dynamicImage
+            return image
 
 getAnswer :: [String] -> IO String
 getAnswer elemlist = do
