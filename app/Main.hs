@@ -1,19 +1,13 @@
 module Main (main, getAnswer) where
     
-import Codec.Picture
--- import Control.Monad
+import IOUtil (loadAssets, formAssetPaths, outputPath)
 import AvatarMaker (hairColours, hairLengths, hairTextures, skinColours, eyeColours, createAvatar)
-
--- constants
-imagesPath :: String
-imagesPath = "./images/"
-
-outputPath :: String
-outputPath = "./output/"
+import AvatarDisplay (displayAvatar)
+import Codec.Picture
 
 main :: IO ()
 main = do
-    putStrLn "a simple avatar maker -- work in progress!"
+    putStrLn "a simple avatar maker!"
     putStrLn "Please pick a hair colour from the following: black, brown, honey, blonde"
     currHairColour <- getAnswer hairColours
 
@@ -32,35 +26,13 @@ main = do
     putStrLn "And finally, please give your character a name:"
     currName <- getLine
 
-    putStrLn "now generating avatar"
+    putStrLn "now generating avatar..."
 
     images <- loadAssets (formAssetPaths currHairColour currHairLength currHairTexture currSkinColour currEyeColour)
-
-    writePng (outputPath ++ currName ++ ".png") (createAvatar images)
+    let avatar = createAvatar images
+    writePng (outputPath ++ currName ++ ".png") avatar
+    displayAvatar(avatar)
     putStrLn "Success!"
-
-loadAssets :: [String] -> IO [(Image PixelRGBA8)]
-loadAssets paths = mapM loadImage paths
-
-loadImage :: FilePath -> IO (Image PixelRGBA8)
-loadImage path = do
-    result <- readImage path
-    case result of
-        Left errorMsg -> error $ "Error loading PNG image: " ++ errorMsg
-        Right dynamicImage -> do
-            let image :: Image PixelRGBA8
-                image = convertRGBA8 dynamicImage
-            return image
-
-formAssetPaths :: String -> String -> String -> String -> String -> [String]
-formAssetPaths currHairColour currHairLength currHairTexture currSkinColour currEyeColour = 
-    reverse [formHairPath currHairLength currHairTexture currHairColour, formPath "eyes" currEyeColour, formPath "skin" currSkinColour]
-
-formPath :: String -> String -> String
-formPath part colour = imagesPath ++ part ++ " " ++ colour ++ ".png"
-
-formHairPath :: String -> String -> String -> String
-formHairPath hairLength hairTexture hairColour = formPath "hair" (hairLength ++ " " ++ hairTexture ++ " " ++ hairColour)
 
 getAnswer :: [String] -> IO String
 getAnswer elemlist = do
@@ -70,5 +42,3 @@ getAnswer elemlist = do
        else do
           putStrLn "Please choose one of the provided options!"
           getAnswer elemlist
-
-
