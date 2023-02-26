@@ -1,5 +1,7 @@
 module Main (main, getAnswer) where
     
+import IOUtil (loadAssets, formAssetPaths, outputPath)
+import AvatarDisplay (displayAvatar)
 import Codec.Picture
 -- import Control.Monad
 import AvatarMaker (hairColours, hairLengths, hairTextures, skinColours, eyeColours, shirtColours, yesNo, createAvatar, mergeImages, dyeImage, colourToRGBA8)
@@ -38,12 +40,16 @@ main = do
     putStrLn "And finally, please give your character a name:"
     currName <- getLine
 
-    putStrLn "now generating avatar"
+    putStrLn "now generating avatar..."
 
     images <- formAssets currHairColour currHairLength currHairTexture currSkinColour currEyeColour currShirtColour hasBangs
-
-    writePng (outputPath ++ currName ++ ".png") (createAvatar images)
+    let avatar = createAvatar images
+    writePng (outputPath ++ currName ++ ".png") avatar
+    displayAvatar(avatar)
     putStrLn "Success!"
+    
+    putStrLn "now generating avatar..."
+
 
 formAssets :: String -> String -> String -> String -> String -> String -> String -> IO [Image PixelRGBA8]
 formAssets hairColour hairLength hairTexture skinColour eyeColour shirtColour hasBangs = do
@@ -130,5 +136,3 @@ getAnswer elemlist = do
        else do
           putStrLn "Please choose one of the provided options!"
           getAnswer elemlist
-
-

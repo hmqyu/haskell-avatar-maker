@@ -30,6 +30,7 @@ eyeColours = ["blue","green","light brown", "dark brown"]
 shirtColours :: [String]
 shirtColours = ["blue","green","red", "black", "white"]
 
+
 yesNo :: [String]
 yesNo = ["yes","no"]
 
@@ -48,7 +49,6 @@ colourToRGBA8 "light"   = PixelRGBA8 181 140 104 255
 colourToRGBA8 "tan"     = PixelRGBA8 244 195 161 255
 colourToRGBA8 "medium"  = PixelRGBA8 204 154 128 255
 colourToRGBA8 "dark"    = PixelRGBA8 134 90 78 255
-
 
 
 ----------------
@@ -93,6 +93,7 @@ mixPixel (PixelRGBA8 r1 g1 b1 a1) (PixelRGBA8 r2 g2 b2 a2) =
 -- determines what colour value it should be if a colour with transparency is layered on top
 mixPixelValue :: (Integral a) => a -> a -> a -> a
 mixPixelValue c1 c2 alpha = round ((fromIntegral alpha / 255.0) * fromIntegral c1 + (fromIntegral (255 - alpha) / 255.0) * fromIntegral c2)
+
 
 -- dyes an image either using a defined colour constant
 dyeImage :: Image PixelRGBA8 -> PixelRGBA8 -> Image PixelRGBA8
