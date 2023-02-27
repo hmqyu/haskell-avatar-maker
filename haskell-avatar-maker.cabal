@@ -26,6 +26,7 @@ source-repository head
 library
   exposed-modules:
       AvatarMaker
+      Colours
   other-modules:
       Paths_haskell_avatar_maker
   hs-source-dirs:

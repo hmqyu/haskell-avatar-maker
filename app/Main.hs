@@ -1,51 +1,51 @@
-module Main (main, getAnswer) where
+module Main (main, checkAnswer) where
     
 import IOUtil (loadAssets, outputPath, colourTag, linesTag)
-import AvatarMaker (AvatarPart(..), apOptions, createAvatar)
-import AvatarDisplay (displayAvatar)
+import AvatarMaker (AvatarPart(..), avatar, createAvatar)
+import Colours (colourToRGBA8)
+-- import AvatarDisplay (displayAvatar)
 import Codec.Picture
 
 main :: IO ()
 main = do
-    putStrLn "a simple avatar maker -- work in progress!"
+    putStrLn "-- a simple avatar maker --"
     runAvatarMaker
 
 runAvatarMaker :: IO ()
 runAvatarMaker = do
-    putStrLn "Please pick a hair colour from the following: black, light brown, dark brown, blonde"
-    currHairColour <- getAnswer HairColour
+    putStrLn "please pick a hair colour from the following: black, light brown, dark brown, blonde"
+    currHairColour <- checkAnswer HairColour
 
-    putStrLn "Please pick a hair length from the following: short, medium, long"
-    currHairLength <- getAnswer HairLength
+    putStrLn "please pick a hair length from the following: short, medium, long"
+    currHairLength <- checkAnswer HairLength
 
-    putStrLn "Please pick a hair texture from the following: straight, wavy, curly"
-    currHairTexture <- getAnswer HairTexture
+    putStrLn "please pick a hair texture from the following: straight, wavy, curly"
+    currHairTexture <- checkAnswer HairTexture
 
-    putStrLn "Should your avatar have bangs? yes or no"
-    currBangs <- getAnswer HasBangs
+    putStrLn "should your avatar have bangs? yes or no"
+    currBangs <- checkAnswer HasBangs
 
-    putStrLn "Please pick a skin colour from the following: light, tan, medium, dark"
-    currSkinColour <- getAnswer SkinColour
+    putStrLn "please pick a skin colour from the following: light, tan, medium, dark"
+    currSkinColour <- checkAnswer SkinColour
 
-    putStrLn "Please pick an eye colour from the following: blue, green, light brown, dark brown"
-    currEyeColour <- getAnswer EyeColour
+    putStrLn "please pick an eye colour from the following: blue, green, light brown, dark brown"
+    currEyeColour <- checkAnswer EyeColour
 
-    putStrLn "Please pick a shirt colour from the following: blue, green, red, black, white"
-    currShirtColour <- getAnswer ShirtColour
+    putStrLn "please pick a shirt colour from the following: blue, green, red, black, white"
+    currShirtColour <- checkAnswer ShirtColour
 
-    putStrLn "And finally, please give your character a name:"
+    putStrLn "and finally, please give your character a name:"
     currName <- getLine
 
     putStrLn "now generating avatar..."
 
     avatarPartsImagesColoured <- loadAssets currHairTexture currHairLength currBangs colourTag
     avatarPartsImagesLineart <- loadAssets currHairTexture currHairLength currBangs linesTag
-    let coloursSoFar = [currSkinColour, currShirtColour, currEyeColour, currHairColour]
-    let avatarPartsColours = if currBangs == "yes" then coloursSoFar ++ [currHairColour] else coloursSoFar
+    let coloursSoFar = [colourToRGBA8 currSkinColour, colourToRGBA8 currShirtColour, colourToRGBA8 currEyeColour, colourToRGBA8 currHairColour]
+    let avatarPartsColours = if currBangs == "yes" then coloursSoFar ++ [colourToRGBA8 currHairColour] else coloursSoFar
         
-    let avatar = createAvatar avatarPartsImagesColoured avatarPartsImagesLineart avatarPartsColours
-    writePng (outputPath ++ currName ++ ".png") avatar
-    -- displayAvatar avatar
+    let currAvatar = createAvatar avatarPartsImagesColoured avatarPartsImagesLineart avatarPartsColours
+    writePng (outputPath ++ currName ++ ".png") currAvatar
     putStrLn "success! your avatar can now be found in the output folder."
     putStrLn "would you like to create another avatar?"
     putStrLn "type yes to continue, or any character to quit"
@@ -53,11 +53,14 @@ runAvatarMaker = do
     if decision == "yes" then runAvatarMaker
     else putStrLn "thanks for playing!"
 
-getAnswer :: AvatarPart -> IO String
-getAnswer elemlist = do
+-- designAvatar :: IO [String]
+-- designAvatar = mapM askQuestion
+
+checkAnswer :: AvatarPart -> IO String
+checkAnswer elemlist = do
     line <- getLine
-    if line `elem` apOptions elemlist
+    if line `elem` avatar elemlist
         then return line
         else do
             putStrLn "Please choose one of the provided options!"
-            getAnswer elemlist
+            checkAnswer elemlist
