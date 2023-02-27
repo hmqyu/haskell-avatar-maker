@@ -1,5 +1,5 @@
 -- represents various util functions for the Main class
-module IOUtil (loadAssets, formAssetPaths, outputPath, colourTag, linesTag) where
+module IOUtil (loadAssets, formAssetPaths, outputPath, tag) where
 
 ---------------
 --- IMPORTS ---
@@ -18,13 +18,11 @@ imagesPath = "./avatar-parts/"
 outputPath :: String
 outputPath = "./output/"
 
--- ending tag for the flat colour image of an avatar part
-colourTag :: String
-colourTag = " colour.png"
-
--- ending tag for the lineart image of an avatar part
-linesTag :: String
-linesTag = " lines.png"
+-- tag determines which type of image to extract
+tag :: String -> String
+tag "colour" = " colour.png"
+tag "lines" = " lines.png"
+tag _ = ""
 
 -- the body parts of an avatar
 bodyParts :: [String]

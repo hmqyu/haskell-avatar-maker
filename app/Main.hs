@@ -1,6 +1,6 @@
 module Main (main, checkAnswer) where
     
-import IOUtil (loadAssets, outputPath, colourTag, linesTag)
+import IOUtil (loadAssets, outputPath, tag)
 import AvatarMaker (AvatarPart(..), avatar, createAvatar)
 import Colours (colourToRGBA8)
 -- import AvatarDisplay (displayAvatar)
@@ -39,8 +39,8 @@ runAvatarMaker = do
 
     putStrLn "now generating avatar..."
 
-    avatarPartsImagesColoured <- loadAssets currHairTexture currHairLength currBangs colourTag
-    avatarPartsImagesLineart <- loadAssets currHairTexture currHairLength currBangs linesTag
+    avatarPartsImagesColoured <- loadAssets currHairTexture currHairLength currBangs (tag "colour")
+    avatarPartsImagesLineart <- loadAssets currHairTexture currHairLength currBangs (tag "lines")
     let coloursSoFar = [colourToRGBA8 currSkinColour, colourToRGBA8 currShirtColour, colourToRGBA8 currEyeColour, colourToRGBA8 currHairColour]
     let avatarPartsColours = if currBangs == "yes" then coloursSoFar ++ [colourToRGBA8 currHairColour] else coloursSoFar
         
@@ -53,8 +53,8 @@ runAvatarMaker = do
     if decision == "yes" then runAvatarMaker
     else putStrLn "thanks for playing!"
 
--- designAvatar :: IO [String]
--- designAvatar = mapM askQuestion
+designAvatar :: IO [String]
+designAvatar = mapM askQuestion
 
 checkAnswer :: AvatarPart -> IO String
 checkAnswer elemlist = do
