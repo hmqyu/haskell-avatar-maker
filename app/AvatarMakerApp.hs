@@ -4,9 +4,8 @@ module AvatarMakerApp ( runAvatarMakerApp ) where
 ---------------
 --- IMPORTS- --
 ---------------
-import AssetLoader ( loadAssets, outputPath, ImageType(..) )
-import AvatarCreator ( Avatar(..), avatarToStrings, createAvatar )
-import Codec.Picture
+import AssetLoader ( loadAssets, saveImage, ImageType(..) )
+import AvatarCreator ( Avatar(..), avatarOptions, avatarColours, avatarToStrings, createAvatar )
 
 
 ---------------
@@ -26,33 +25,33 @@ questionEnd = " from the following options: "
 -- avatars are saved as PNGs in the designated output folder
 runAvatarMakerApp :: IO ()
 runAvatarMakerApp = do
-    currHairLength <- findUserOptionFor HairLength
-    currHairTexture <- findUserOptionFor HairTexture
-    currBangs <- findUserOptionFor BangsStyle
-    currHairColour <- findUserOptionFor HairColour
-    currSkinColour <- findUserOptionFor SkinColour
-    currEyeColour <- findUserOptionFor EyeColour
-    currShirtColour <- findUserOptionFor ShirtColour
+    selectedAvatarOptions <- getAllUserOptionsFor avatarOptions
+    selectedAvatarColours <- getAllUserOptionsFor avatarColours
 
     putStrLn "and finally, please give your character a name:"
-    currName <- getLine
+    name <- getLine
 
     putStrLn "now generating avatar..."
     
-    let hairstyle = currHairTexture ++ " " ++ currHairLength
-    imageColours <- loadAssets hairstyle currBangs Colour
-    imageLineart <- loadAssets hairstyle currBangs Lines
-    let coloursSoFar = [currSkinColour, currShirtColour, currEyeColour, currHairColour]
-    let selectedColours = if not (currBangs == "none") then coloursSoFar ++ [currHairColour] else coloursSoFar
-        
-    let currAvatar = createAvatar imageColours imageLineart selectedColours
-    writePng (outputPath ++ currName ++ ".png") currAvatar
-    putStrLn "success! your avatar can now be found in the output folder."
+    imageColours <- loadAssets selectedAvatarOptions Colour
+    imageLineart <- loadAssets selectedAvatarOptions Lines
+    let currAvatar = createAvatar imageColours imageLineart (reverse selectedAvatarColours)
+    saveImage (name ++ ".png") currAvatar
+
+    putStrLn "success! your avatar can now be found in the designated folder."
     putStrLn "would you like to create another avatar?"
     putStrLn "type yes to continue, or any character to quit"
     decision <- getLine
     if decision == "yes" then runAvatarMakerApp
     else putStrLn "thanks for playing!"
+
+-- gets all user selections for a given set of avatar colours/options
+getAllUserOptionsFor :: [Avatar] -> IO [String]
+getAllUserOptionsFor optionsList = do
+    let n = length optionsList
+        findUserOptionForQuestionAtGivenIndex i = do
+            findUserOptionFor (optionsList !! i)
+    mapM findUserOptionForQuestionAtGivenIndex [0..n-1]
 
 -- determines the user's selected option for an avatar part
 findUserOptionFor :: Avatar -> IO String
