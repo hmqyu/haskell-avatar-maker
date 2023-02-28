@@ -42,8 +42,6 @@ packages:
 #
 extra-deps:
 - JuicyPixels-3.3.7
-- gloss-1.13.2.2
-- gloss-juicy-0.2.3
 
 # Override default flag values for local packages and extra-deps
 # flags: {}

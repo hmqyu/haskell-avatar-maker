@@ -25,7 +25,9 @@ source-repository head
 
 library
   exposed-modules:
-      AvatarMaker
+      AvatarCreator
+      Colours
+      ImageMerger
   other-modules:
       Paths_haskell_avatar_maker
   hs-source-dirs:
@@ -35,15 +37,13 @@ library
       Cabal
     , JuicyPixels
     , base >=4.7 && <5
-    , gloss
-    , gloss-juicy
   default-language: Haskell2010
 
 executable haskell-avatar-maker-exe
   main-is: Main.hs
   other-modules:
-      AvatarDisplay
-      IOUtil
+      AssetLoader
+      AvatarMakerApp
       Paths_haskell_avatar_maker
   hs-source-dirs:
       app
@@ -51,23 +51,5 @@ executable haskell-avatar-maker-exe
   build-depends:
       JuicyPixels
     , base >=4.7 && <5
-    , gloss
-    , gloss-juicy
-    , haskell-avatar-maker
-  default-language: Haskell2010
-
-test-suite haskell-avatar-maker-test
-  type: exitcode-stdio-1.0
-  main-is: Spec.hs
-  other-modules:
-      Paths_haskell_avatar_maker
-  hs-source-dirs:
-      test
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
-  build-depends:
-      JuicyPixels
-    , base >=4.7 && <5
-    , gloss
-    , gloss-juicy
     , haskell-avatar-maker
   default-language: Haskell2010

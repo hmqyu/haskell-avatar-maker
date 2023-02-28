@@ -11,20 +11,6 @@ packages:
       size: 2724
   original:
     hackage: JuicyPixels-3.3.7
-- completed:
-    hackage: gloss-1.13.2.2@sha256:cdb17d6c2f7cc32dc0893e60d6c047f12adeb1a7279064e0def9fdfd97477bee,4075
-    pantry-tree:
-      sha256: d6353a809bbbd8711d53e738ef4e1e503b19280057a5ccd8c9a3b5c164a4718f
-      size: 3807
-  original:
-    hackage: gloss-1.13.2.2
-- completed:
-    hackage: gloss-juicy-0.2.3@sha256:0c3bca95237cbf91f8b3b1936a0661f1e0457acd80502276d54d6c5210f88b25,1618
-    pantry-tree:
-      sha256: 914c08509bc3da4707d90e542b44833ca1a62abc83c2848f87df3d7a7a1d7e03
-      size: 273
-  original:
-    hackage: gloss-juicy-0.2.3
 snapshots:
 - completed:
     sha256: adbc602422dde10cc330175da7de8609e70afc41449a7e2d6e8b1827aa0e5008
