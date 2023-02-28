@@ -4,7 +4,7 @@
 
 * [summary](#summary)
 * [setup](#setup)
-* [Walkthrough](#walkthrough)
+* [walkthrough](#walkthrough)
 
 ## summary
 
@@ -44,7 +44,7 @@ stack run
 
     <img src="https://i.imgur.com/pXWunOW.png">
 
-    <img src="https://i.imgur.com/kFExwf8.png">
+    <img src="https://i.imgur.com/vmP00rm.png">
 
 3. the program will ask if you'd like to create another avatar or not, where you can continue playing or quit:
 
