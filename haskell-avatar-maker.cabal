@@ -25,8 +25,9 @@ source-repository head
 
 library
   exposed-modules:
-      AvatarMaker
+      AvatarCreator
       Colours
+      ImageMerger
   other-modules:
       Paths_haskell_avatar_maker
   hs-source-dirs:
@@ -43,8 +44,9 @@ library
 executable haskell-avatar-maker-exe
   main-is: Main.hs
   other-modules:
+      AssetLoader
       AvatarDisplay
-      IOUtil
+      AvatarMakerApp
       Paths_haskell_avatar_maker
   hs-source-dirs:
       app

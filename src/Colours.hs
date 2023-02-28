@@ -1,5 +1,4 @@
-module Colours
-    ( colourToRGBA8, dyeImage ) where
+module Colours ( colourToRGBA8, dyeImage, dyeAllImages ) where
 
 ---------------
 --- IMPORTS ---
@@ -33,3 +32,7 @@ colourToRGBA8 _ = PixelRGBA8 0 0 0 0
 dyeImage :: (Image PixelRGBA8, PixelRGBA8) -> Image PixelRGBA8
 dyeImage (img, PixelRGBA8 r1 g1 b1 a1) =
   pixelMap (\(PixelRGBA8 r2 g2 b2 a2) -> if a2 == 0 then PixelRGBA8 r2 g2 b2 a2 else PixelRGBA8 r1 g1 b1 a1) img
+
+-- dyes all images using the given list of colours
+dyeAllImages :: [Image PixelRGBA8] -> [PixelRGBA8] -> [Image PixelRGBA8]
+dyeAllImages images colours = map dyeImage (zip images colours)

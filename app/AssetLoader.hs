@@ -1,5 +1,5 @@
 -- represents various util functions for the Main class
-module IOUtil (loadAssets, formAssetPaths, outputPath, tag) where
+module AssetLoader (loadAssets, outputPath, ImageType(..)) where
 
 ---------------
 --- IMPORTS ---
@@ -18,11 +18,13 @@ imagesPath = "./avatar-parts/"
 outputPath :: String
 outputPath = "./output/"
 
--- tag determines which type of image to extract
-tag :: String -> String
-tag "colour" = " colour.png"
-tag "lines" = " lines.png"
-tag _ = ""
+-- represents the type of image that needs to be extracted
+data ImageType = Colour | Lines
+
+-- determines the ending tag for an image's path
+tag :: ImageType -> String
+tag Colour = " colour.png"
+tag Lines = " lines.png"
 
 -- the body parts of an avatar
 bodyParts :: [String]
@@ -33,24 +35,24 @@ bodyParts = ["skin", "shirt", "eyes"]
 --- METHODS ---
 ---------------
 -- loads the required avatar image assets, given the hair specifications
-loadAssets :: String -> String -> String -> String -> IO [Image PixelRGBA8]
-loadAssets currHairTexture currHairLength hasBangs tag = mapM loadImage (formAssetPaths currHairTexture currHairLength hasBangs tag)
+loadAssets :: String -> String -> String -> ImageType -> IO [Image PixelRGBA8]
+loadAssets currHairTexture currHairLength hasBangs imgtag = mapM loadImage (formAssetPaths currHairTexture currHairLength hasBangs (tag imgtag))
 
 -- forms all the paths to the required image assets
 formAssetPaths :: String -> String -> String -> String -> [String]
-formAssetPaths currHairLength currHairTexture hasBangs tag = 
-    let hairPaths = formHairPaths currHairLength currHairTexture hasBangs tag
-    in foldr (\x y -> formAvatarPartPaths x tag ++ y) hairPaths bodyParts
+formAssetPaths currHairLength currHairTexture hasBangs imgtag = 
+    let hairPaths = formHairPaths currHairLength currHairTexture hasBangs imgtag
+    in foldr (\x y -> formAvatarPartPaths x imgtag ++ y) hairPaths bodyParts
 
 -- forms a single path to a required image asset
 formAvatarPartPaths :: String -> String -> [String]
-formAvatarPartPaths part tag = [imagesPath ++ part ++ tag]
+formAvatarPartPaths part imgtag = [imagesPath ++ part ++ imgtag]
 
 -- specifically forms the required hair path due to the uniqueness of the avatar part
 formHairPaths :: String -> String -> String -> String -> [String]
-formHairPaths hairTexture hairLength hasBangs tag =
-    let hairPaths = formAvatarPartPaths ("hair " ++ hairTexture ++ " " ++ hairLength) tag in
-    if hasBangs == "yes" then hairPaths ++ formAvatarPartPaths "bangs" tag
+formHairPaths hairTexture hairLength hasBangs imgtag =
+    let hairPaths = formAvatarPartPaths ("hair " ++ hairTexture ++ " " ++ hairLength) imgtag in
+    if hasBangs == "yes" then hairPaths ++ formAvatarPartPaths "bangs" imgtag
     else hairPaths
 
 -- loads an image from a specified file path
