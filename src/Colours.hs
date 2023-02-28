@@ -11,17 +11,19 @@ import Codec.Picture
 ---------------
 colourToRGBA8 :: String -> PixelRGBA8
 colourToRGBA8 "white"       = PixelRGBA8 255 255 255 255
-colourToRGBA8 "red"         = PixelRGBA8 240 83 83 255
+colourToRGBA8 "red"         = PixelRGBA8 204 90 83 255
 colourToRGBA8 "green"       = PixelRGBA8 100 209 108 255
 colourToRGBA8 "blue"        = PixelRGBA8 100 169 209 255
 colourToRGBA8 "blonde"      = PixelRGBA8 230 214 167 255
 colourToRGBA8 "light brown" = PixelRGBA8 178 136 110 255
-colourToRGBA8 "dark brown"  = PixelRGBA8 100 81 79 255
-colourToRGBA8 "black"       = PixelRGBA8 65 60 61 255
-colourToRGBA8 "light"   = PixelRGBA8 255 223 201 255
-colourToRGBA8 "tan"     = PixelRGBA8 244 195 161 255
-colourToRGBA8 "medium"  = PixelRGBA8 204 154 128 255
-colourToRGBA8 "dark"    = PixelRGBA8 134 90 78 255
+colourToRGBA8 "chocolate brown"  = PixelRGBA8 100 81 79 255
+colourToRGBA8 "black-brown"       = PixelRGBA8 65 60 61 255
+colourToRGBA8 "pale"   = PixelRGBA8 255 223 201 255
+colourToRGBA8 "light"     = PixelRGBA8 244 195 161 255
+colourToRGBA8 "tan"  = PixelRGBA8 204 154 128 255
+colourToRGBA8 "brown"    = PixelRGBA8 164 108 53 255
+colourToRGBA8 "dark brown"    = PixelRGBA8 149 96 68 255
+colourToRGBA8 "black"    = PixelRGBA8 84 62 54 255
 colourToRGBA8 _ = PixelRGBA8 0 0 0 0
 
 
