@@ -22,10 +22,10 @@ avatarToStrings :: Avatar -> (String, [String])
 avatarToStrings HairTexture = ("hair texture", ["straight","wavy","curly"])
 avatarToStrings HairLength = ("hair length", ["short","medium","long"])
 avatarToStrings BangsStyle = ("bangs style", ["straight","none"])
-avatarToStrings HairColour = ("hair colour", ["black", "light brown", "dark brown", "blonde"])
-avatarToStrings EyeColour = ("eye colour", ["blue","green","light brown", "dark brown"])
+avatarToStrings HairColour = ("hair colour", ["black-brown", "chocolate brown", "light brown", "blonde", "red"])
+avatarToStrings EyeColour = ("eye colour", ["blue","green","light brown", "chocolate brown"])
 avatarToStrings ShirtColour = ("shirt colour", ["blue","green","red","black", "white"])
-avatarToStrings SkinColour = ("skin colour", ["light","tan","medium", "dark"])
+avatarToStrings SkinColour = ("skin colour", ["pale","light","tan","brown","dark brown","black"])
 
 
 ---------------
