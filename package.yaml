@@ -22,8 +22,6 @@ description:         Please see the README on GitHub at <https://github.com/hmqy
 dependencies:
 - base >= 4.7 && < 5
 - JuicyPixels
-- gloss
-- gloss-juicy
 
 ghc-options:
 - -Wall
@@ -53,15 +51,3 @@ executables:
     dependencies:
     - haskell-avatar-maker
     - JuicyPixels
-
-# tests:
-#   haskell-avatar-maker-test:
-#     main:                Spec.hs
-#     source-dirs:         test
-#     ghc-options:
-#     - -threaded
-#     - -rtsopts
-#     - -with-rtsopts=-N
-#     dependencies:
-#     - haskell-avatar-maker
-#     - JuicyPixels

@@ -1,4 +1,5 @@
--- represents various util functions for the Main class
+-- represents an asset loader. loads images from given file paths
+-- includes methods specifically built to load Avatar part files
 module AssetLoader (loadAssets, outputPath, ImageType(..)) where
 
 ---------------
@@ -35,30 +36,28 @@ bodyParts = ["skin", "shirt", "eyes"]
 --- METHODS ---
 ---------------
 -- loads the required avatar image assets, given the hair specifications
-loadAssets :: String -> String -> String -> ImageType -> IO [Image PixelRGBA8]
-loadAssets currHairTexture currHairLength hasBangs imgtag = mapM loadImage (formAssetPaths currHairTexture currHairLength hasBangs (tag imgtag))
+loadAssets :: String -> String -> ImageType -> IO [Image PixelRGBA8]
+loadAssets hairstyle bangs imgtag = mapM loadImage (formAssetPaths hairstyle bangs (tag imgtag))
 
 -- forms all the paths to the required image assets
-formAssetPaths :: String -> String -> String -> String -> [String]
-formAssetPaths currHairLength currHairTexture hasBangs imgtag = 
-    let hairPaths = formHairPaths currHairLength currHairTexture hasBangs imgtag
+formAssetPaths :: String -> String -> String -> [String]
+formAssetPaths hairstyle bangs imgtag = 
+    let hairPaths = formHairPaths hairstyle bangs imgtag
     in foldr (\x y -> formAvatarPartPaths x imgtag ++ y) hairPaths bodyParts
 
--- forms a single path to a required image asset
+-- forms a path to a required image asset
 formAvatarPartPaths :: String -> String -> [String]
 formAvatarPartPaths part imgtag = [imagesPath ++ part ++ imgtag]
 
--- specifically forms the required hair path due to the uniqueness of the avatar part
-formHairPaths :: String -> String -> String -> String -> [String]
-formHairPaths hairTexture hairLength hasBangs imgtag =
-    let hairPaths = formAvatarPartPaths ("hair " ++ hairTexture ++ " " ++ hairLength) imgtag in
-    if hasBangs == "yes" then hairPaths ++ formAvatarPartPaths "bangs" imgtag
-    else hairPaths
+-- specifically forms the required hair paths due to the uniqueness of the avatar part
+formHairPaths :: String -> String -> String -> [String]
+formHairPaths hairstyle bangs imgtag = formAvatarPartPaths ("hair " ++ hairstyle) imgtag ++ formAvatarPartPaths ("bangs " ++ bangs) imgtag   
 
 -- loads an image from a specified file path
 loadImage :: FilePath -> IO (Image PixelRGBA8)
 loadImage path = do
     result <- readImage path
+    -- reference: https://stackoverflow.com/questions/30512442/juicypixels-cant-load-png-files
     case result of
         Left errorMsg -> error $ "Error loading PNG image: " ++ errorMsg
         Right dynamicImage -> do

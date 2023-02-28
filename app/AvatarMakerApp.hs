@@ -1,12 +1,11 @@
+-- 
 module AvatarMakerApp ( runAvatarMakerApp ) where
 
 ---------------
 --- IMPORTS- --
 ---------------
 import AssetLoader ( loadAssets, outputPath, ImageType(..) )
-import AvatarCreator ( AvatarPart(..), createAvatar, avatarToString )
-import Colours ( colourToRGBA8 )
--- import AvatarDisplay (displayAvatar)
+import AvatarCreator ( Avatar(..), avatarToStrings, createAvatar )
 import Codec.Picture
 
 
@@ -27,23 +26,24 @@ questionEnd = " from the following options: "
 -- avatars are saved as PNGs in the designated output folder
 runAvatarMakerApp :: IO ()
 runAvatarMakerApp = do
-    currHairLength <- getSelectedPart HairLength
-    currHairTexture <- getSelectedPart HairTexture
-    currBangs <- getSelectedPart HasBangs
-    currHairColour <- getSelectedPart HairColour
-    currSkinColour <- getSelectedPart SkinColour
-    currEyeColour <- getSelectedPart EyeColour
-    currShirtColour <- getSelectedPart ShirtColour
+    currHairLength <- findUserOptionFor HairLength
+    currHairTexture <- findUserOptionFor HairTexture
+    currBangs <- findUserOptionFor BangsStyle
+    currHairColour <- findUserOptionFor HairColour
+    currSkinColour <- findUserOptionFor SkinColour
+    currEyeColour <- findUserOptionFor EyeColour
+    currShirtColour <- findUserOptionFor ShirtColour
 
     putStrLn "and finally, please give your character a name:"
     currName <- getLine
 
     putStrLn "now generating avatar..."
-
-    imageColours <- loadAssets currHairTexture currHairLength currBangs Colour
-    imageLineart <- loadAssets currHairTexture currHairLength currBangs Lines
-    let coloursSoFar = [colourToRGBA8 currSkinColour, colourToRGBA8 currShirtColour, colourToRGBA8 currEyeColour, colourToRGBA8 currHairColour]
-    let selectedColours = if currBangs == "yes" then coloursSoFar ++ [colourToRGBA8 currHairColour] else coloursSoFar
+    
+    let hairstyle = currHairTexture ++ " " ++ currHairLength
+    imageColours <- loadAssets hairstyle currBangs Colour
+    imageLineart <- loadAssets hairstyle currBangs Lines
+    let coloursSoFar = [currSkinColour, currShirtColour, currEyeColour, currHairColour]
+    let selectedColours = if not (currBangs == "none") then coloursSoFar ++ [currHairColour] else coloursSoFar
         
     let currAvatar = createAvatar imageColours imageLineart selectedColours
     writePng (outputPath ++ currName ++ ".png") currAvatar
@@ -54,14 +54,11 @@ runAvatarMakerApp = do
     if decision == "yes" then runAvatarMakerApp
     else putStrLn "thanks for playing!"
 
--- build an avatar given the user's inputs
--- buildAvatar :: IO [String]
-
 -- determines the user's selected option for an avatar part
-getSelectedPart :: AvatarPart -> IO String
-getSelectedPart ap = do
-    let part = fst (avatarToString ap)
-    let options = snd (avatarToString ap)
+findUserOptionFor :: Avatar -> IO String
+findUserOptionFor op = do
+    let part = fst (avatarToStrings op)
+    let options = snd (avatarToStrings op)
     askQuestion part options
     checkAnswer options
 
