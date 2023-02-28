@@ -40,7 +40,7 @@ stack run
 
     <img src="https://i.imgur.com/tGvC6GT.png">
 
-...which can be found in the output folder of the project:
+    ...which can be found in the output folder of the project:
 
     <img src="https://i.imgur.com/pXWunOW.png">
 
